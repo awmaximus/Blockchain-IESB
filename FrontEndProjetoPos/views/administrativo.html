@@ -1,0 +1,304 @@
+<style>
+
+    .pb-2rem {
+        padding-bottom: 2rem;
+    }
+
+    .pb-1rem {
+        padding-bottom: 1rem;
+    }
+
+    .card-footer ul li {
+        padding: initial !important;
+    }
+
+    .card-body {
+        height: 420px !important;
+    }
+
+    @media screen and (min-height: 800px) {
+        .card-body {
+            height: 720px !important;
+        }
+    }
+
+    .display-initial {
+        display: initial !important;
+    }
+
+    .modalsuccess {
+        padding: 2rem 0;
+        color: #ffffff;
+        background-color: #008000;
+        border: 2px solid #ffffff;
+        border-radius: 5px;
+    }
+
+    .modalalert {
+        padding: 2rem 0;
+        color: #ffffff;
+        background-color: #8d0303;
+        border: 2px solid #ffffff;
+        border-radius: 5px;
+    }
+
+    .cursor-hand > i {
+        padding: 0 0.2rem;
+    }
+    .pr-10{
+        padding-right: 10px;
+    }
+    .btn-warning {
+        color: #ffffff !important;
+    }
+</style>
+
+<div class="animated fadeIn">
+    <div class="card" ng-controller="administrativoCtrl">
+        <div class="modal fade bd-example-modal-sm"
+             tabindex="-1"
+             role="dialog"
+             aria-labelledby="mySmallModalLabel"
+             id="modalSucesso"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div ng-show="msgSucesso" class="modal-content text-center modalsuccess">
+                    <i class="fa fa-check fa-5x" aria-hidden="true"></i>
+                    <p class="fa-2x">{{textoMsg}}</p>
+                </div>
+
+                <div ng-show="msgAlerta" class="modal-content text-center modalalert">
+                    <i class="fa fa-check fa-5x" aria-hidden="true"></i>
+                    <p class="fa-2x">{{textoMsg}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4 class="card-title pb-1rem">Medicamentos</h4>
+
+                    <div id="ListaMedicamento" class="table-responsive">
+                        <table ng-show="ListaItem==true"
+                               class="table table-condensed"
+                               style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Fabricante</th>
+                                    <th>Registro Anvisa</th>
+                                    <th class="text-xl-center">Validade</th>
+                                    <th class="text-xl-center">Código Barras</th>
+                                    <th class="text-xl-center">Ativo</th>
+                                    <th class="text-xl-center">Operação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in medicamentos">
+                                    <td class="maiusculo">{{item.nome}}</td>
+                                    <td class="maiusculo">{{item.fabricante}}</td>
+                                    <td>{{item.registroanvisa}}</td>
+                                    <td class="text-xl-center">{{item.validade | date:'dd/MM/yyyy'}}</td>
+                                    <td class="text-xl-center">{{item.codigobarra}}</td>
+                                    <td class="text-xl-center">{{item.ativo}}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center" style="display:flex;">
+                                            <a ng-click="Fluxo('editaritem', item)" title="Visualizar" class="cursor-hand">
+                                                <i class="fa fa-eye d-flex justify-content-center fa-lg cursor-hand" aria-hidden="true"></i>
+                                            </a>
+                                            <a ng-click="Fluxo('movimentacao', item)" title="Movimentação" class="cursor-hand">
+                                                <i class="fa fa-list-ul d-flex justify-content-center fa-lg cursor-hand" aria-hidden="true"></i>
+                                            </a>
+                                            <a ng-click="getIdMedicamento(item)" title="Vender" class="cursor-hand">
+                                                <i class="fa fa-shopping-cart d-flex justify-content-center fa-lg cursor-hand" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p ng-show="medicamentos.length == 0">Não existe medicamento cadastrado.</p>
+                    </div>
+
+                    <div id="NovoMedicamento" ng-show="NovoItem==true || EditItem==true">
+                        <h5 ng-show="NovoItem==true">Incluir Medicamento</h5>
+                        <h5 ng-show="EditItem==true">Visualizar/Alterar Medicamento</h5>
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-xs-12 col-md-4">
+                                    <label for="inputNome">Medicamento</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="inputNome"
+                                           placeholder="Nome do medicamento"
+                                           ng-model="Nome" />
+                                </div>
+                                <div class="form-group col-xs-12 col-md-4">
+                                    <label for="inputPassword4">Fabricante</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="inputFabricante"
+                                           placeholder="Nome do fabricante"
+                                           ng-model="Fabricante" />
+                                </div>
+                                <div class="form-group col-xs-12 col-md-4">
+                                    <label for="inputPassword4">Registro Anvisa</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="inputRegistroAnvisa"
+                                           ng-model="RegistroAnvisa"
+                                           placeholder="Registro da Anvisa" />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-xs-12 col-md-4">
+                                    <label for="inputLote">Lote</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="inputLote"
+                                           ng-model="Lote"
+                                           placeholder="Lote do medicamento" />
+                                </div>
+                                <div class="form-group col-xs-12 col-md-4">
+                                    <label for="inputValidade">Validade</label>
+                                    <input type="date"
+                                           class="form-control"
+                                           id="inputValidade"
+                                           ng-model="Validade"
+                                           placeholder="Validade do medicamento" />
+                                </div>
+                                <div class="form-group col-xs-12 col-md-2">
+                                    <label for="inputValidade">Tipo</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="inputTipo"
+                                           ng-model="Tipo" />
+                                </div>
+                                <div class="form-group col-xs-12 col-md-1">
+                                    <label for="inputState">Ativo</label>
+                                    <select id="inputState" ng-model="Ativo" class="form-control maiusculo">
+                                        <option value="true" selected>Sim</option>
+                                        <option value="false">Não</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-sm-12 col-md-2">
+                                    <label for="inputCodigoBarras">Código de barras</label>
+                                    <input type="text"
+                                           class="form-control"
+                                           ng-model="CodigoBarras"
+                                           id="inputCodigoBarras" ng-maxlength="13" maxlength="13" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div ng-show="MovimentacaoItem==true">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h5>Dados do medicamento</h5>
+                                <div class="row">
+                                    <div class="col-sm-12 d-flex"><p>Produto:&nbsp;</p><p>{{ItemSelecionado.nome}}</p></div>
+                                    <div class="col-sm-12 d-flex"><p>Fabricante:&nbsp;</p><p>{{ItemSelecionado.fabricante}}</p></div>
+                                    <div class="col-sm-12 d-flex"><p>Registro Anvisa:&nbsp;</p><p>{{ItemSelecionado.registroanvisa}}</p></div>
+                                    <div class="col-sm-12 d-flex"><p>Validade:&nbsp;</p><p>{{ItemSelecionado.validade | date:'dd/MM/yyyy'}}</p></div>
+                                    <div class="col-sm-12 d-flex"><p>Ativo:&nbsp;</p><p>{{ItemSelecionado.ativo}}</p></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <h5>Fluxo da movimentação</h5>
+                                <p ng-show="ResultadoDetalheMovimentacao.length==0">Não existe fluxo cadastrado até o momento.</p>
+
+                                <div ng-show="ResultadoDetalheMovimentacao.length > 0 && MovimentacaoItemIncluir==false">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Etapas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="item in ResultadoDetalheMovimentacao">
+                                                <td>
+                                                    {{item.datacadastro | date:'dd/MM/yyyy hh:mm:ss a'}} - {{item.etapa}}
+                                                </td>
+                                                <td>- {{item.usuariocadastro}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div ng-show="MovimentacaoItem==true && MovimentacaoItemIncluir==true">
+                                    <form>
+                                        <div class="form-row">
+                                            <div class="form-group col-xs-12 col-md-12">
+                                                <label for="inputState">Etapa</label>
+                                                <select id="inputState" ng-model="EtapaMovimentacao" class="form-control maiusculo">
+                                                    <option value="PRODUZIDO">PRODUZIDO</option>
+                                                    <option value="EM LOTE">EM LOTE</option>
+                                                    <option value="QUALIDADE">QUALIDADE</option>
+                                                    <option value="ESTOQUE">ESTOQUE</option>
+                                                    <option value="VENDA AUTORIZADA">VENDA AUTORIZADA</option>
+                                                    <option value="TRANSFERENCIA">TRANSFERENCIA</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-xs-12 col-md-12">
+                                                <label for="inputUsuario">Usuário</label>
+                                                <input type="text"
+                                                       class="form-control"
+                                                       id="inputUsuarioCadastro"
+                                                       ng-model="UsuarioCadastro" disabled />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/.row-->
+            <div class="chart-wrapper" style="height:300px;margin-top:40px;"></div>
+        </div>
+
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-sm-6">
+                    <ul style="width:initial;display: initial;" ng-show="ListaItem==true">
+                        <li>
+                            <a class="btn btn-primary" href="#" ng-click="Fluxo('novoitem')">
+                                <i class="fa fa-plus-square fa-lg"></i> Incluir Medicamento
+                            </a>
+                        </li>
+                    </ul>
+                    <ul style="width:initial;display: initial;" ng-show="NovoItem==true || EditItem==true">
+                        <li>
+                            <a class="btn btn-success" href="#" ng-click="PostMedicamento()"><i class="fa fa-check fa-lg"></i>Salvar</a>
+                            <a class="btn btn-danger" href="#" ng-click="Cancelar()"><i class="fa fa-times fa-lg"></i>Cancelar</a>
+                        </li>
+                    </ul>
+                    <ul style="width:initial;display: initial;" ng-show="MovimentacaoItem==true && MovimentacaoItemIncluir == false">
+                        <li>
+                            <a class="btn btn-warning" href="#" ng-click="VoltarMedicamentos()">
+                                <i class="fa fa-arrow-left fa-lg"></i> Voltar para medicamentos
+                            </a>
+                            <a class="btn btn-primary" href="#" ng-click="MovimentacaoIncluir()">
+                                <i class="fa fa-plus-square fa-lg"></i> Incluir Movimentação
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-6">
+                    <ul style="width:initial;display: initial;" ng-show="MovimentacaoItem==true && MovimentacaoItemIncluir==true">
+                        <li>
+                            <a class="btn btn-success" href="#" ng-click="PostMovimentacao()"><i class="fa fa-check fa-lg"></i> Salvar Movimentação</a>
+                            <a class="btn btn-danger" href="#" ng-click="Cancelar('movimentacao')"><i class="fa fa-times fa-lg"></i>Cancelar</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
